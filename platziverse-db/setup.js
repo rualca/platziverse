@@ -1,9 +1,23 @@
 'use strict';
 
+const inquirer = require('inquirer');
+const chalk = require('chalk');
 const debug = require('debug')('platziverse:db:setup');
 const db = require('./');
 
+const prompt = inquirer.createPromptModule();
+
 async function setup() {
+	const answer = await prompt({
+		type: 'confirm',
+		name: 'setup',
+		message: 'This will destroy your database, are you sure?'
+	});
+
+	if (!answer.setup) {
+		return console.log('Nothing happened :)');
+	}
+
 	const config = {
 		database: process.env.DB_NAME || 'platziverse',
 		usernmae: process.env.DB_USER || 'platzi',
@@ -21,7 +35,7 @@ async function setup() {
 }
 
 function handlerFatalError(error) {
-	console.error(error.message);
+	console.error(`${chalk.red('[fatal error]')} ${error.message}`);
 	console.error(error.stack);
 	process.exit(1);
 }
