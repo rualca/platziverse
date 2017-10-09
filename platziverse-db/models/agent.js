@@ -8,7 +8,7 @@ module.exports = function setupAgentModel(config) {
 
 	return sequelize.define('agent', {
 		uuid: {
-			type: sequelize.STRING,
+			type: Sequelize.STRING,
 			allowNull: false
 		},
 		username: {
