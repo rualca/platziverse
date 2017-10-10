@@ -4,7 +4,7 @@
   "description": "A Simple IoT Platform - DB Module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "DEBUG=platziverse:* ava test/ --verbose",
     "lint": "xo",
     "setup": "DEBUG=platziverse:* node setup.js"
   },
@@ -19,11 +19,15 @@
   },
   "homepage": "https://github.com/rualca/platziverse#readme",
   "devDependencies": {
+    "ava": "^0.22.0",
+    "defaults": "^1.0.3",
+    "sqlite3": "^3.1.13",
     "xo": "^0.18.2"
   },
   "dependencies": {
     "chalk": "^2.1.0",
     "debug": "^3.1.0",
+    "defaults": "^1.0.3",
     "inquirer": "^3.3.0",
     "pg": "^7.3.0",
     "pg-hstore": "^2.3.2",
