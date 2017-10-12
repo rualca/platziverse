@@ -20,13 +20,19 @@ let AgentStub = null;
 
 test.beforeEach(async () => {
 	sandbox = sinon.sandbox.create();
+
 	AgentStub = {
-		hasMany: sandbox.spy()
+		hasMany: sandbox.spy(),
+		findById: sandbox.stub()
 	};
+
+	AgentStub.findById.withArgs(id).returns(Promise.resolve(agentFixtures.byId(id)));
+
 	const setupDatabase = proxyquire('../../', {
 		'./models/agent': () => AgentStub,
 		'./models/metric': () => MetricStub
 	});
+
 	db = await setupDatabase(config);
 });
 
@@ -47,6 +53,10 @@ test.serial('Setup', t => {
 
 test.serial('Agent#findById', async t => {
 	const agent = await db.Agent.findById(id);
+
+	t.true(AgentStub.findById.called);
+	t.true(AgentStub.findById.calledOnce);
+	t.true(AgentStub.findById.calledWith(id));
 
 	t.deepEqual(agent, agentFixtures.byId(id), 'should be the same');
 });
