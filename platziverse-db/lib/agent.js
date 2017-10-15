@@ -30,9 +30,23 @@ module.exports = function (AgentModel) {
 		});
 	}
 
+	function findAll() {
+		return AgentModel.findAll();
+	}
+
+	function findAllConnected() {
+		return AgentModel.findAll({
+			where: {
+				connected: true
+			}
+		});
+	}
+
 	return {
 		createOrUpdate,
 		findById,
-		findByUuid
+		findByUuid,
+		findAll,
+		findAllConnected
 	};
 };
