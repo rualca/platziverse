@@ -78,3 +78,12 @@ test.serial('Agent#createOrUpdate', async t => {
 	t.true(AgentStub.update.calledOnce);
 	t.deepEqual(agent, single);
 });
+
+test.serial('Agent#findByUuidd', async t => {
+	const agent = await db.Agent.findByUuid(uuid);
+
+	t.true(AgentStub.findOne.called);
+	t.true(AgentStub.findOne.calledOnce);
+
+	t.deepEqual(agent, agentFixtures.byUuid(uuid), 'should be the same');
+});
