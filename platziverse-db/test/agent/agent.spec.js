@@ -9,6 +9,7 @@ const config = {
 	logging: () => {}
 };
 
+// Stubs and Mocks
 let db = null;
 let sandbox = null;
 const MetricStub = {
@@ -21,6 +22,25 @@ const uuidArgs = {
 	where: {
 		uuid
 	}
+};
+const connectedArgs = {
+	where: {
+		connected: true
+	}
+};
+const usernameArgs = {
+	where: {
+		username: 'platzi',
+		connected: true
+	}
+};
+let newAgent = {
+	uuid: '123-123-123',
+	name: 'test',
+	username: 'test',
+	hostname: 'test',
+	pid: 0,
+	connected: false
 }
 let AgentStub = null;
 
@@ -31,12 +51,18 @@ test.beforeEach(async () => {
 		hasMany: sandbox.spy(),
 		findById: sandbox.stub(),
 		findOne: sandbox.stub(),
-		update: sandbox.stub()
+		update: sandbox.stub(),
+		create: sandbox.stub()
 	};
 
 	AgentStub.findById.withArgs(id).returns(Promise.resolve(agentFixtures.byId(id)));
 	AgentStub.findOne.withArgs(uuidArgs).returns(Promise.resolve(agentFixtures.byUuid(uuid)));
 	AgentStub.update.withArgs(single, uuidArgs).returns(Promise.resolve(single));
+	AgentStub.create.withArgs(newAgent).returns(Promise.resolve({
+		toJSON: () => {
+			return newAgent;
+		}
+	}));
 
 	const setupDatabase = proxyquire('../../', {
 		'./models/agent': () => AgentStub,
@@ -71,7 +97,7 @@ test.serial('Agent#findById', async t => {
 	t.deepEqual(agent, agentFixtures.byId(id), 'should be the same');
 });
 
-test.serial('Agent#createOrUpdate', async t => {
+test.serial('Agent#createOrUpdate - exists', async t => {
 	const agent = await db.Agent.createOrUpdate(single);
 
 	t.true(AgentStub.findOne.calledTwice);

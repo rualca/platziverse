@@ -42,11 +42,21 @@ module.exports = function (AgentModel) {
 		});
 	}
 
+	function findConnectedByUsername(username) {
+		return AgentModel.findAll({
+			where: {
+				username,
+				connected: true
+			}
+		});
+	}
+
 	return {
 		createOrUpdate,
 		findById,
 		findByUuid,
 		findAll,
-		findAllConnected
+		findAllConnected,
+		findConnectedByUsername
 	};
 };
