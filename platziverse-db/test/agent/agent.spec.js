@@ -16,6 +16,12 @@ const MetricStub = {
 };
 const single = Object.assign({}, agentFixtures.single);
 const id = 1;
+const uuid = 'yyyy-yyy-yyy';
+const uuidArgs = {
+	where: {
+		uuid
+	}
+}
 let AgentStub = null;
 
 test.beforeEach(async () => {
@@ -23,10 +29,14 @@ test.beforeEach(async () => {
 
 	AgentStub = {
 		hasMany: sandbox.spy(),
-		findById: sandbox.stub()
+		findById: sandbox.stub(),
+		findOne: sandbox.stub(),
+		update: sandbox.stub()
 	};
 
 	AgentStub.findById.withArgs(id).returns(Promise.resolve(agentFixtures.byId(id)));
+	AgentStub.findOne.withArgs(uuidArgs).returns(Promise.resolve(agentFixtures.byUuid(uuid)));
+	AgentStub.update.withArgs(single, uuidArgs).returns(Promise.resolve(single));
 
 	const setupDatabase = proxyquire('../../', {
 		'./models/agent': () => AgentStub,
@@ -59,4 +69,12 @@ test.serial('Agent#findById', async t => {
 	t.true(AgentStub.findById.calledWith(id));
 
 	t.deepEqual(agent, agentFixtures.byId(id), 'should be the same');
+});
+
+test.serial('Agent#createOrUpdate', async t => {
+	const agent = await db.Agent.createOrUpdate(single);
+
+	t.true(AgentStub.findOne.calledTwice);
+	t.true(AgentStub.update.calledOnce);
+	t.deepEqual(agent, single);
 });
